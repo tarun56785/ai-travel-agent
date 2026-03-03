@@ -1,0 +1,12 @@
+type Query {
+    getUserTrips(email: String!): [Trip]
+}
+
+type Trip {
+    id: ID!
+    customerEmail: String!
+    destination: String!
+    flightDetails: String
+    status: String
+    createdAt: String
+}

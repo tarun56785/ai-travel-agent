@@ -1,0 +1,61 @@
+server:
+  port: 8081 # Changing from default 8080 so it doesn't fight Keycloak!
+
+spring:
+  application:
+    name: ai-travel-agent
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/concierge_db
+    username: root
+    password: rootpassword
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true # This prints the generated SQL to our console so we can watch the magic
+
+  ai:
+    vertex:
+      ai:
+        gemini:
+          project-id: ${project-id}
+          location: ${location}
+          chat:
+            options:
+              model: ${model-id}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # This tells Spring Boot exactly where to check if a token is valid
+          issuer-uri: ${Oauth-issuer-uri}
+
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      # This tells Kafka we are sending plain text tickets
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      # This groups our background workers together
+      group-id: concierge-fulfillment-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  graphql:
+    graphiql:
+      enabled: true
+
+# --- NEW: External APIs ---
+openweather:
+  api-key: ${openweather-api-key}
+  url: ${openweather-url}
+
+amadeus:
+  client-id: ${amadeus-client-id}
+  client-secret: ${amadeus-client-secret}
+  auth-url: ${amadeus-auth-url}
+  search-url: ${amadeus-search-url}
